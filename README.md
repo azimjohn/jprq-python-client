@@ -61,7 +61,7 @@ $ pip uninstall jprq
 ## Limitations
 
 - Cannot expose WebSocket
-- Doesn't work with Long HTTP Polling
+- Doesn't work with HTTP Long Polling
 
 ## Troubleshooting
 
