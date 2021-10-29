@@ -25,7 +25,7 @@ async def open_http_tunnel(ws_uri: str, http_uri):
 
         host, token = message["host"], message["token"]
         print(f"\033[32m{'Tunnel Status':<25}Online\033[00m")
-        print(f"{'Forwarded':<25}{f'{host} -> {http_uri}'}\n")
+        print(f"{'Forwarded':<25}{f'{host} → {http_uri}'}\n")
         print(f"\033[2;33mVisit https://{host}/\033[00m\n")
 
         client = Client(http_uri, token)
