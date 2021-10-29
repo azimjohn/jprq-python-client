@@ -12,7 +12,7 @@ ssl_context = ssl.create_default_context()
 ssl_context.load_verify_locations(certifi.where())
 
 
-async def open_tunnel(ws_uri: str, http_uri):
+async def open_http_tunnel(ws_uri: str, http_uri):
     async with websockets.connect(ws_uri, ssl=ssl_context) as websocket:
         message = bson.loads(await websocket.recv())
 
