@@ -1,8 +1,9 @@
-import asyncio
 import sys
+import click
+import asyncio
 from getpass import getuser
 
-import click
+from rich import print as pretty_print
 
 from .tunnel_http import open_http_tunnel
 from .tunnel_tcp import open_tcp_tunnel
@@ -14,18 +15,29 @@ def main():
     pass
 
 
+banner = f"""[bold cyan]
+  (_)_ __  _ __ __ _ 
+  | | '_ \| '__/ _` |
+  | | |_) | | | (_| |
+ _/ | .__/|_|  \__, |
+|__/|_|           |_|
+{f'v{__version__}':>14}
+
+[bold yellow]Press Ctrl+C to quit.
+"""
+
+
 @main.command()
 @click.argument('port')
 @click.option('-s', '--subdomain', default='')
 @click.option('--host', default='open.jprq.io')
 def http(**kwargs):
-    host = kwargs['host']
-    port = kwargs['port']
+    host, port = kwargs['host'], kwargs['port']
     username = kwargs['subdomain'] or getuser()
 
-    print(f"\n\033[1;35mjprq : {__version__}\033[00m \033[34m{'Press Ctrl+C to quit.':>60}\n")
-
+    pretty_print(banner)
     loop = asyncio.get_event_loop()
+
     try:
         loop.run_until_complete(
             open_http_tunnel(
@@ -34,25 +46,29 @@ def http(**kwargs):
             )
         )
     except KeyboardInterrupt:
-        print("\n\033[31mjprq tunnel closed\033[00m")
+        pretty_print(f"[bold red]\njprq tunnel closed!")
+        sys.exit(1)
 
 
 @main.command()
 @click.argument('port', type=click.INT)
 @click.option('--host', default='tcp.jprq.io')
 def tcp(**kwargs):
-    host = kwargs['host']
-    port = kwargs['port']
+    host, port = kwargs['host'], kwargs['port']
 
-    print(f"\n\033[1;35mjprq : {__version__}\033[00m \033[34m{'Press Ctrl+C to quit.':>60}\n")
+    pretty_print(banner)
 
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
-            open_tcp_tunnel(remote_server_host=host, ws_uri=f'wss://{host}/_ws/', local_server_port=port)
+            open_tcp_tunnel(
+                remote_server_host=host,
+                ws_uri=f'wss://{host}/_ws/',
+                local_server_port=port
+            )
         )
     except KeyboardInterrupt:
-        print("\n\033[31mjprq tunnel closed\033[00m")
+        pretty_print(f"[bold red]\njprq tunnel closed!")
         sys.exit(1)
 
 

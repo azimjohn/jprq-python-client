@@ -1,10 +1,10 @@
-import asyncio
 import sys
-
-import bson
-import websockets
 import ssl
+import bson
 import certifi
+import asyncio
+import websockets
+from rich import print as pretty_print
 
 from .http import Client
 
@@ -17,16 +17,20 @@ async def open_http_tunnel(ws_uri: str, http_uri):
         message = bson.loads(await websocket.recv())
 
         if message.get("warning"):
-            print(message["warning"], file=sys.stderr)
+            pretty_print(
+                f"[bold yellow]WARNING: {message['warning']}", file=sys.stderr)
 
         if message.get("error"):
-            print(message["error"], file=sys.stderr)
+            pretty_print(
+                f"[bold yellow]ERROR: {message['error']}", file=sys.stderr)
             return
 
         host, token = message["host"], message["token"]
-        print(f"\033[32m{'Tunnel Status':<25}Online\033[00m")
-        print(f"{'Forwarded':<25}{f'{host} → {http_uri}'}\n")
-        print(f"\033[2;33mVisit https://{host}/\033[00m\n")
+
+        pretty_print(f"{'Tunnel Status:':<25}[bold green]Online")
+        pretty_print(
+            f"{'Forwarded:':<25}{f'[bold cyan]{host} → {http_uri}'}")
+        pretty_print(f"\n[bold bright_magenta]:tada: Visit: https://{host}\n")
 
         client = Client(http_uri, token)
         while True:

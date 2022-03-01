@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 import aiohttp
 import bson
+from rich import print as pretty_print
 
 
 class Client:
@@ -20,7 +21,8 @@ class Client:
                     data=message['body'],
                 )
             except:
-                print(f"Error Processing Request At: {message['url']}", file=sys.stderr)
+                pretty_print(
+                    f"[bold red]FAIL: [white]Error Processing Request At: {message['url']}", file=sys.stderr)
                 return {
                     'request_id': message['id'],
                     'token': self.token,
@@ -29,7 +31,9 @@ class Client:
                     'body': b'Error Performing Request',
                 }
 
-            print(message["method"], message["url"], response.status)
+            pretty_print(
+                f'[bold green]{"INFO:":<10} [white] {self.base_uri} - "[bold bright_red]{message["method"]} [white]{message["url"]}"[bold cyan] {response.status}')
+
             body = await response.read()
             response_message = {
                 'request_id': message['id'],
@@ -38,4 +42,5 @@ class Client:
                 'header': dict(response.headers),
                 'body': body,
             }
+
             await websocket.send(bson.dumps(response_message))
