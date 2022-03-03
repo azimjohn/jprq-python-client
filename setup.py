@@ -49,7 +49,7 @@ setup(
     author_email='azimjohn@yahoo.com',
     maintainer='Azimjon Pulatov',
     maintainer_email='azimjohn@yahoo.com',
-    url='https://github.com/azimjohn/jprq-py',
+    url='https://github.com/azimjohn/jprq-python-client',
     license='MIT',
     packages=find_packages(),
     entry_points={
